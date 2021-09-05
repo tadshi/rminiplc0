@@ -1,31 +1,37 @@
+#[derive(Debug)]
 pub struct CompilationError {
-    pos : (usize, usize),
-    errCode : ErrorCode
+    pos: (usize, usize),
+    errCode: ErrorCode,
 }
 
 impl CompilationError {
-    pub fn new (line : usize, col : usize, err : ErrorCode)  -> CompilationError {
+    pub fn new(line: usize, col: usize, err: ErrorCode) -> CompilationError {
         CompilationError {
-            pos : (line, col),
-            errCode : err
+            pos: (line, col),
+            errCode: err,
         }
     }
 
-    pub fn new_packed (ptr : (usize, usize), err : ErrorCode) -> CompilationError {
+    pub fn new_packed(ptr: (usize, usize), err: ErrorCode) -> CompilationError {
         CompilationError {
-            pos : ptr,
-            errCode : err
+            pos: ptr,
+            errCode: err,
         }
+    }
+
+    pub fn get_err_code(&self) -> &ErrorCode {
+        &self.errCode
     }
 }
 
+#[derive(PartialEq, Debug)]
 pub enum ErrorCode {
-    ErrNoError,  // Should be only used internally.
+    ErrNoError, // Should be only used internally.
     ErrStreamError,
     ErrEOF,
     ErrInvalidInput,
     ErrInvalidIdentifier,
-    ErrIntegerOverflow,  // int32_t overflow.
+    ErrIntegerOverflow, // int32_t overflow.
     ErrNoBegin,
     ErrNoEnd,
     ErrNeedIdentifier,
@@ -38,5 +44,5 @@ pub enum ErrorCode {
     ErrDuplicateDeclaration,
     ErrNotInitialized,
     ErrInvalidAssignment,
-    ErrInvalidPrint
+    ErrInvalidPrint,
 }

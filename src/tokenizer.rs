@@ -1,3 +1,4 @@
+use std::fmt;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::ops::Deref;
@@ -12,14 +13,46 @@ pub struct Tokenizer<'a> {
     state: DFAState,
 }
 
+pub fn tokenize(input: String) -> Vec<Token> {
+    let mut tkz = Tokenizer::new(&input);
+    tkz.get_all_tokens().unwrap()
+}
+
 impl<'a> Tokenizer<'a> {
-    pub fn next_token(&mut self) -> Result<Token, CompilationError> {
+    pub fn new(input: &'a str) -> Tokenizer<'a> {
+        Tokenizer {
+            filename: input,
+            initialized: false,
+            lines_buffer: Vec::new(),
+            ptr: (0, 0),
+            state: DFAState::InitialState
+        }
+    }
+    pub fn get_next_token(&mut self) -> Result<Token, CompilationError> {
         if !self.initialized {
             self.read_all();
         }
-        self.next_token_unchecked()
+        if self.is_EOF() {
+            return Err(CompilationError::new(0, 0, ErrorCode::ErrEOF));
+        }
+        self.next_token()
     }
-    fn next_token_unchecked(&mut self) -> Result<Token, CompilationError> {
+
+    pub fn get_all_tokens(&mut self) -> Result<Vec<Token>, CompilationError> {
+        let mut ret = Vec::new();
+        loop {
+            let token = self.next_token();
+            if let Err(cerr) = token {
+                if cerr.get_err_code().eq(&ErrorCode::ErrEOF) {
+                    return Ok(ret);
+                } else {
+                    return Err(cerr);
+                }
+            }
+            ret.push(token?);
+        }
+    }
+    fn next_token(&mut self) -> Result<Token, CompilationError> {
         let mut current = DFAState::InitialState;
         let mut ss = String::new();
         let mut pos = (0, 0);
@@ -186,8 +219,6 @@ impl<'a> Tokenizer<'a> {
     }
 }
 
-pub fn tokenize() {}
-
 fn check_keyword(identifier: &str) -> TokenType {
     match identifier {
         "begin" => TokenType::Begin,
@@ -198,7 +229,7 @@ fn check_keyword(identifier: &str) -> TokenType {
         _ => TokenType::Identifier,
     }
 }
-enum TokenType {
+pub enum TokenType {
     NullToken,
     UnsignedInteger,
     Identifier,
@@ -233,7 +264,7 @@ impl TokenType {
     }
 }
 
-enum Token {
+pub enum Token {
     Integer(TokenType, u64, (usize, usize), (usize, usize)),
     Str(TokenType, String, (usize, usize), (usize, usize)),
 }
@@ -246,6 +277,15 @@ impl Token {
     ) -> Result<Token, CompilationError> {
         let sign_string = token_type.to_string()?;
         Ok(Token::Str(token_type, sign_string, start, end))
+    }
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Token::Integer(_, int, ..) => f.write_str(&int.to_string()),
+            Token::Str(_, string, ..)  => f.write_str(string)
+        }
     }
 }
 
