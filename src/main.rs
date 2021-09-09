@@ -29,7 +29,10 @@ struct Target {
 fn main() {
     println!("Hello, world!");
     let target = parse(&env::args().collect()).expect("Please check your command line.");
-    let mut writer = BufWriter::new(File::open(target.output).expect("unable to open output file"));
+    if matches!(target.task, Modules::NOTHING) {
+        return;
+    }
+    let mut writer = BufWriter::new(File::create(target.output).expect("unable to open output file"));
     match target.task {
         Modules::ANALYZE => analyze(target.input).iter().for_each(|instr| {write!(writer, "{}\n", instr).unwrap();return;}),
         Modules::TOKENIZE => tokenize(target.input).iter().for_each(|token| {write!(writer, "{}\n", token).unwrap();return;}),
@@ -63,7 +66,7 @@ fn parse(input: &Vec<String>) -> Result<Target, ArgsError> {
     let input: String = args.value_of("input")?;
     let output: String = args.value_of("output")?;
     if help {
-        args.full_usage();
+        print!("{}", args.full_usage());
         return Ok(Target {
             task: Modules::NOTHING,
             input: String::new(),
@@ -87,7 +90,7 @@ fn parse(input: &Vec<String>) -> Result<Target, ArgsError> {
         });
     }
 
-    args.full_usage();
+    print!("{}", args.full_usage());
     return Ok(Target {
         task: Modules::NOTHING,
         input: String::new(),

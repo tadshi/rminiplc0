@@ -1,26 +1,26 @@
 #[derive(Debug)]
 pub struct CompilationError {
     pos: (usize, usize),
-    errCode: ErrorCode,
+    err_code: ErrorCode,
 }
 
 impl CompilationError {
     pub fn new(line: usize, col: usize, err: ErrorCode) -> CompilationError {
         CompilationError {
             pos: (line, col),
-            errCode: err,
+            err_code: err,
         }
     }
 
     pub fn new_packed(ptr: (usize, usize), err: ErrorCode) -> CompilationError {
         CompilationError {
             pos: ptr,
-            errCode: err,
+            err_code: err,
         }
     }
 
     pub fn get_err_code(&self) -> &ErrorCode {
-        &self.errCode
+        &self.err_code
     }
 }
 
