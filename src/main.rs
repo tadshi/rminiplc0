@@ -8,11 +8,7 @@ const PROGRAM_NAME: &'static str = "rMINIPLC0c";
 
 use std::{env, fs::File, io::{BufWriter, Write}};
 
-mod analyzer;
-mod error;
-mod tokenizer;
-use analyzer::analyze;
-use tokenizer::tokenize;
+use rminiplc0::{analyze,tokenize};
 
 enum Modules {
     TOKENIZE,

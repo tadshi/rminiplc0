@@ -10,7 +10,6 @@ pub struct Tokenizer<'a> {
     initialized: bool,
     lines_buffer: Vec<String>,
     ptr: (usize, usize),
-    state: DFAState,
 }
 
 pub fn tokenize(input: String) -> Vec<Token> {
@@ -24,8 +23,7 @@ impl<'a> Tokenizer<'a> {
             filename: input,
             initialized: false,
             lines_buffer: Vec::new(),
-            ptr: (0, 0),
-            state: DFAState::InitialState
+            ptr: (0, 0)
         }
     }
     pub fn get_next_token(&mut self) -> Result<Token, CompilationError> {
@@ -217,6 +215,7 @@ impl<'a> Tokenizer<'a> {
         self.initialized = true;
     }
 
+    #[allow(non_snake_case)]
     fn is_EOF(&self) -> bool {
         return self.ptr.0 >= self.lines_buffer.len();
     }

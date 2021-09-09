@@ -368,6 +368,7 @@ impl fmt::Display for Instruction {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub enum Operation {
     ILL = 0,
     LIT,
