@@ -272,8 +272,9 @@ impl Analyzer {
             return None;
         }
         self.current_pos = self.tokens[self.offset].get_end_pos();
+        let off = self.offset;
         self.offset += 1;
-        Some(&self.tokens[self.offset])
+        Some(&self.tokens[off])
     }
 
     fn unread_token(&mut self) {
@@ -359,8 +360,8 @@ pub struct Instruction(Operation, i32);
 
 impl fmt::Display for Instruction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.1 {
-            0 => f.write_str("ILLIGAL!!!"),
+        match self.0 as i32 {
+            0 => f.write_str("ILLEGAL!!!"),
             1..=3 => f.write_fmt(format_args!("{:?} {}", self.0, self.1)),
             _ => f.write_fmt(format_args!("{:?}", self.0)),
         }

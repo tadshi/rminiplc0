@@ -236,7 +236,7 @@ fn check_keyword(identifier: &str) -> TokenType {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     NullToken,
     UnsignedInteger,
@@ -272,7 +272,7 @@ impl TokenType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Token {
     Integer(TokenType, u32, (usize, usize), (usize, usize)),
     Str(TokenType, String, (usize, usize), (usize, usize)),

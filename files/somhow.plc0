@@ -1,5 +1,5 @@
           begin
+          const b = 1;
           var a = 1;
-          const b = 1
           print(a+b);
           end;
